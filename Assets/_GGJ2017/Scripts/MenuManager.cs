@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
     public string nextScene;
+    public GameObject tutPanel;
 
     public void StartGame()
     {
@@ -24,5 +26,10 @@ public class MenuManager : MonoBehaviour
 		#else
 		Application.Quit();
 		#endif
+    }
+
+    public void Tutorial()
+    {
+        tutPanel.gameObject.active = !tutPanel.active;
     }
 }
