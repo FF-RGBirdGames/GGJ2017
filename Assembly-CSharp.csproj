@@ -51,10 +51,12 @@
      <Compile Include="Assets\ShaderForge\Example Assets\Scripts\SoftNormalsToVertexColor.cs" />
      <Compile Include="Assets\_GGJ2017\Scripts\AudioProcessor.cs" />
      <Compile Include="Assets\_GGJ2017\Scripts\CameraShake.cs" />
+     <Compile Include="Assets\_GGJ2017\Scripts\CarregarProximaCena.cs" />
      <Compile Include="Assets\_GGJ2017\Scripts\Example.cs" />
      <Compile Include="Assets\_GGJ2017\Scripts\MenuManager.cs" />
      <Compile Include="Assets\_GGJ2017\Scripts\PlayerManager.cs" />
      <Compile Include="Assets\_GGJ2017\Scripts\ReceiveCastShadow.cs" />
+     <Compile Include="Assets\_GGJ2017\Scripts\ScorePrint.cs" />
      <Compile Include="Assets\_GGJ2017\Scripts\playermanagerB.cs" />
      <None Include="Assets\ShaderForge\Editor\InternalResources\GPU Rendering\SFN_LightPosition\SFN_LightPosition.shader" />
      <None Include="Assets\ShaderForge\Editor\InternalResources\GPU Rendering\SFN_Fresnel\SFN_Fresnel_EXP.shader" />

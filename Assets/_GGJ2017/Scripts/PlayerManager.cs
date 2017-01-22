@@ -9,20 +9,24 @@ public class PlayerManager : MonoBehaviour
 {
     public int acertos;
     public int erros;
-    public int total;  
+    public int total;
+    public GameObject sharkao;
+    public GameObject waves;
+    public GameObject pomba;
 
     public AudioSource audioSource;
-    public Camera camerazinha;
-
     public readonly Color colFail = Color.red;
     public readonly Color colWin = Color.green;
     public readonly Color colNormal = Color.white;
 
-    public Light testLight;
+    private float lerp =0f ;
+    private float poswaveinicial;
+    private float poswavefinal;
 
     private int teclaAtual;
     private bool acertou;
     private bool pressed;
+    private bool jogando;
 
     public float bpm;
     private float time;
@@ -36,8 +40,16 @@ public class PlayerManager : MonoBehaviour
     public int acertosTrigger = 3;
     public int acertosConsecutivos;
 
+    void Awake()
+    {   
+        DontDestroyOnLoad(this);
+    }
+
     void Start()
-    {        
+    {
+        jogando = true;
+        poswaveinicial = waves.transform.position.x;        
+        poswavefinal = poswaveinicial;
         acertos = 0;
         erros = 0;
         total = 0;    
@@ -53,13 +65,35 @@ public class PlayerManager : MonoBehaviour
 
     public void musicaFim()
     {        
-        Application.Quit();
+        // Application.Quit();
+
+        Application.LoadLevel("End_Win");
+    }
+
+    public void perder()
+    {
+        jogando = false;
+        poswavefinal = 4.15f;
+        Invoke("pegueOPombo",1f);
+
+        
+    }
+
+    public void pegueOPombo()
+    {
+        pomba.SetActive(false);
+        Invoke("proximacena", 1f);
+    }
+
+    void proximacena()
+    {
+        Application.LoadLevel("End_Lose");
     }
 
     void getInput()
     {
         if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
-        {            
+        {
             Application.Quit();
         }
         
@@ -89,46 +123,67 @@ public class PlayerManager : MonoBehaviour
         }        
     }
 
+    void ganhaVida()
+    {
+        health++;        
+    }
+
+    void perdeVida()
+    {
+        health--;
+    }
+
     void Update()
     {
-        getInput();
+
+        if (jogando)
+            poswavefinal = -4.15f - 0.31f * (health - maxHealth);
+
+        getInput();        
+        lerp = Time.deltaTime / (time);
+        poswaveinicial = Mathf.Lerp(poswaveinicial, poswavefinal, lerp);
+        waves.transform.position = new Vector2(poswaveinicial, 0);
 
         if (pressed)
             if (acertou)
             {
                 teclaAtualTexto.GetComponent<Image>().color = colWin;
-                charGlow.SetColor("_EmissionColor", new Color(0.17f, 3, 0));            
+                charGlow.SetColor("_EmissionColor", new Color(0.17f, 3, 0));                            
             }
             else
-            {
+            {                                
                 teclaAtualTexto.GetComponent<Image>().color = colFail;
                 charGlow.SetColor("_EmissionColor", new Color(3, 0, 0));
+
             }        
         else
         {
             teclaAtualTexto.GetComponent<Image>().color = colNormal;
             charGlow.SetColor("_EmissionColor", new Color(3, 3, 3));
+
         }                    
     }
 
     public void CheckBeat()
     {    
-        testLight.gameObject.SetActive(true);
 
         total++;
 
         if (acertou)
         {
-            testLight.color = colWin;
             acertosConsecutivos++;
             acertos++;
         }
         else
         {
-            testLight.color = colFail;
             acertosConsecutivos = 0;            
             if (health > 0)
-                health--;
+                perdeVida();
+            else
+            {
+                sharkao.SetActive(true);
+                perder();
+            }
             erros++;
         }
 
@@ -136,21 +191,14 @@ public class PlayerManager : MonoBehaviour
         {
             acertosConsecutivos = 0;
             if (health < maxHealth)
-                health++;
+                ganhaVida();
         }
-
-        lifeBar.GetComponent<RectTransform>().sizeDelta = new Vector2(10 * health, 16);
 
         acertou = false;
         pressed = false;
         teclaAtual = getKey();
         teclaAtualTexto.GetComponentInChildren<Text>().text = valTecla().ToString();
         Invoke("turnOff", 0.1f);
-    }
-
-    public void turnOff()
-    {
-        testLight.gameObject.SetActive(false);
     }
 
     public void onOnbeatDetected()
